@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "dess",
   "version": "${version}",
 
-  "name": "Example Mod",
+  "name": "Dessentials",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
-    "Me!"
+    "GamerDuck123"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/GamerDuck123/Dessentials",
+    "sources": "https://github.com/GamerDuck123/Dessentials"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/dess/icon.png",
 
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "com.gamerduck.essentials.EssentialsMain"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "dess.mixins.json"
   ],
 
   "depends": {
