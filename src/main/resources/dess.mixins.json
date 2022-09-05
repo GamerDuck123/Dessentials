@@ -4,12 +4,12 @@
   "package": "com.gamerduck.essentials.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "TeleportCommandMixin",
-    "GameModeCommandMixin",
-    "MeCommandMixin",
-    "MessageCommandMixin",
-    "TimeCommandMixin",
-    "WeatherCommandMixin"
+    "commands.TeleportCommandMixin",
+    "commands.GameModeCommandMixin",
+    "commands.MeCommandMixin",
+    "commands.MessageCommandMixin",
+    "commands.KickCommandMixin",
+    "PlayerManagerMixin"
   ],
   "client": [
   ],

@@ -5,6 +5,7 @@ import com.gamerduck.essentials.commands.handlers.ICommand;
 import com.gamerduck.essentials.commands.handlers.RegisterCommand;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -28,6 +29,9 @@ import java.util.Set;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static net.minecraft.command.argument.EntityArgumentType.*;
+import static net.minecraft.command.argument.Vec3ArgumentType.getPosArgument;
+import static net.minecraft.command.argument.Vec3ArgumentType.vec3;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -35,23 +39,28 @@ import static net.minecraft.server.command.CommandManager.literal;
 public final class TeleportCommands implements ICommand {
     public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
        final LiteralCommandNode<ServerCommandSource> node = dispatcher.register(literal("teleport")
-                .requires(source -> source.hasPermissionLevel(2))
-                    .then(argument("location", Vec3ArgumentType.vec3())
-                        .executes(ctx -> teleport(ctx.getSource(), Vec3ArgumentType.getPosArgument(ctx, "location"))))
-                    .then(argument("player", EntityArgumentType.players())
-                        .executes(ctx -> teleport(ctx.getSource(), EntityArgumentType.getPlayer(ctx, "player")))));
+                .requires(source -> hasPermission(source, "essentials.teleport", source.hasPermissionLevel(2)))
+                    .then(argument("location", vec3())
+                        .executes(ctx -> teleport(ctx, getPosArgument(ctx, "location"))))
+                    .then(argument("player", player())
+                        .executes(ctx -> teleport(ctx, getPlayer(ctx, "player")))));
         dispatcher.register(literal("tp").redirect(node));
 
         final LiteralCommandNode<ServerCommandSource> hereNode = dispatcher.register(literal("teleporthere")
-                .requires(source -> source.hasPermissionLevel(2))
-                .then(argument("players", EntityArgumentType.players())
-                        .executes(ctx -> teleportHere(ctx.getSource(), EntityArgumentType.getPlayers(ctx, "players")))));
+                .requires(source -> hasPermission(source, "essentials.teleport.here", source.hasPermissionLevel(2)))
+                .then(argument("players", players())
+                        .executes(ctx -> teleportHere(ctx, getPlayers(ctx, "players")))));
         dispatcher.register(literal("tphere").redirect(hereNode));
+
+        final LiteralCommandNode<ServerCommandSource> allNode = dispatcher.register(literal("teleportall")
+                .requires(source -> hasPermission(source, "essentials.teleport.all", source.hasPermissionLevel(2)))
+                        .executes(ctx -> teleportAll(ctx)));
+        dispatcher.register(literal("tpall").redirect(allNode));
     }
 
-    public static int teleport(ServerCommandSource source, PosArgument pos) {
-        final ServerPlayerEntity self = source.getPlayer();
-        Vec3d vec3d = pos.toAbsolutePos(source);
+    public static int teleport(CommandContext<ServerCommandSource> ctx, PosArgument pos) {
+        final ServerPlayerEntity self = ctx.getSource().getPlayer();
+        Vec3d vec3d = pos.toAbsolutePos(ctx.getSource());
         double x = vec3d.x;
         double y = vec3d.y;
         double z = vec3d.z;
@@ -64,15 +73,21 @@ public final class TeleportCommands implements ICommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static int teleport(ServerCommandSource source, ServerPlayerEntity pos) {
-        final ServerPlayerEntity self = source.getPlayer();
+    public static int teleport(CommandContext<ServerCommandSource> ctx, ServerPlayerEntity pos) {
+        final ServerPlayerEntity self = ctx.getSource().getPlayer();
         self.teleport(pos.getX(), pos.getY(), pos.getZ());
         return Command.SINGLE_SUCCESS;
     }
 
-    public static int teleportHere(ServerCommandSource source, Collection<ServerPlayerEntity> ent) {
-        final ServerPlayerEntity self = source.getPlayer();
+    public static int teleportHere(CommandContext<ServerCommandSource> ctx, Collection<ServerPlayerEntity> ent) {
+        final ServerPlayerEntity self = ctx.getSource().getPlayer();
         ent.forEach(e -> e.teleport(self.getX(), self.getY(), self.getZ()));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public static int teleportAll(CommandContext<ServerCommandSource> ctx) {
+        final ServerPlayerEntity self = ctx.getSource().getPlayer();
+        self.getServer().getPlayerManager().getPlayerList().forEach(p -> p.teleport(self.getX(),self.getY(),self.getZ()));
         return Command.SINGLE_SUCCESS;
     }
 
