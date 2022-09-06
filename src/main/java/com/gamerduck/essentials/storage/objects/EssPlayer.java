@@ -55,6 +55,7 @@ public class EssPlayer {
 //            this.nickName = data.nickName();
 //            finished.accept(null);
 //        });
+        playerEntity.sendMessage(EssentialsMain.essServer.getMOTD());
         finished.accept(null);
     }
 

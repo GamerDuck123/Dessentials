@@ -1,5 +1,4 @@
-package com.gamerduck.essentials.commands.TODO;
-
+package com.gamerduck.essentials.commands.player;
 
 import com.gamerduck.essentials.EssentialsMain;
 import com.gamerduck.essentials.commands.handlers.ICommand;
@@ -12,24 +11,24 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.Collection;
-
-import static net.minecraft.command.argument.EntityArgumentType.getPlayers;
-import static net.minecraft.command.argument.EntityArgumentType.players;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 @RegisterCommand
-public final class MOTDCommand implements ICommand {
+public final class RulesCommand implements ICommand {
     public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        final LiteralCommandNode<ServerCommandSource> setNode = dispatcher.register(literal("motd")
-                .requires(source -> hasPermission(source, "essentials.motd", source.hasPermissionLevel(0)))
-                .executes(ctx -> motd(ctx)));
+        final LiteralCommandNode<ServerCommandSource> setNode = dispatcher.register(literal("rules")
+                .requires(source -> hasPermission(source, "essentials.rules", source.hasPermissionLevel(0)))
+                .executes(ctx -> rules(ctx, 1))
+                .then(argument("page", integer())
+                        .executes(ctx -> rules(ctx, getInteger(ctx, "page")))));
     }
 
-    public static int motd(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    public static int rules(CommandContext<ServerCommandSource> ctx, Integer page) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
-        player.sendMessage(EssentialsMain.essServer.getMOTD());
+        player.sendMessage(EssentialsMain.essServer.rules.get(page));
         return Command.SINGLE_SUCCESS;
     }
 

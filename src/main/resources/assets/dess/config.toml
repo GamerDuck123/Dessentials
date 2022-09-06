@@ -1,0 +1,29 @@
+[storage]
+    storage-type = "SQLite"
+
+[storage.json]
+    file-location = "Dessentials/storage"
+
+[storage.sqlite]
+    use-different-databases = false
+    file-location = "Dessentials/storage"
+    file-name = "database"
+[storage.sqlite.players]
+    file-location = "Dessentials/storage"
+    file-name = "players"
+[storage.sqlite.warps]
+    file-location = "Dessentials/storage"
+    file-name = "warps"
+[storage.sqlite.kits]
+    file-location = "Dessentials/storage"
+    file-name = "kits"
+[storage.sqlite.jails]
+    file-location = "Dessentials/storage"
+    file-name = "jails"
+
+[storage.databases]
+    use-different-databases = false
+[storage.databases.players]
+[storage.databases.warps]
+[storage.databases.kits]
+[storage.databases.jails]

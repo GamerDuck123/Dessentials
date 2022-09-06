@@ -9,6 +9,7 @@ import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
@@ -28,13 +29,41 @@ public class EssServer {
     private Text MOTD;
     public final HashMap<Integer, Text> rules = Maps.newHashMap();
 
+    private int randomMax = 1000;
+    private int randomMin = 100;
+    private ServerWorld randomWorld;
+
     public EssServer(MinecraftServer server) {
         this.server = server;
         rules.put(1, Text.of("Page 1"));
         rules.put(2, Text.of("Page 2"));
+        MOTD = Text.of("Test MOTD");
     }
     public void close() {
 
+    }
+
+    public int getRandomMax() {
+        return randomMax;
+    }
+
+    public int getRandomMin() {
+        return randomMin;
+    }
+
+    public ServerWorld getRandomWorld() {
+        return randomWorld;
+    }
+    public void setRandomMax(int amount) {
+        randomMax = amount;
+    }
+
+    public void setRandomMin(int amount) {
+        randomMin = amount;
+    }
+
+    public void setRandomWorld(ServerWorld world) {
+        randomWorld = world;
     }
 
     public void setSpawn(Vec3d location) {
